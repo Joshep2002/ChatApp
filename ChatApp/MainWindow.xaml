@@ -1,0 +1,578 @@
+﻿<Window x:Class="ChatApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChatApp" 
+        xmlns:customcontrols="clr-namespace:ChatApp.CustomControls" xmlns:viewmodels="clr-namespace:ChatApp.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ViewModel}"
+        mc:Ignorable="d"
+        x:Name="mainWindow"
+        AllowsTransparency="True"
+        Background="Transparent"
+        FontSize="15" 
+        Height="700" 
+        Width="1280"
+        ResizeMode="NoResize"
+        Title="MainWindow" 
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+
+    <Window.DataContext>
+        <viewmodels:ViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <Style x:Key="ContactInfoButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <ControlTemplate x:Key="ContactInfoButtonTemplate" TargetType="{x:Type Button}">
+            <Border
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
+
+                <Grid
+                VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <!-- Foto de Perfil-->
+                        <ColumnDefinition Width="75"/>
+                        <!-- Nombre y Online Status-->
+                        <ColumnDefinition Width="75"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Ellipse
+                    Height="40"
+                    Width="40">
+                        <Ellipse.Fill>
+                            <ImageBrush 
+                            Stretch="UniformToFill"
+                            ImageSource="{Binding ContactPhoto, FallbackValue=/Assets/5.jpg,TargetNullValue=/Assets/5.jpg,UpdateSourceTrigger=PropertyChanged}"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+
+                    <Grid
+                         Grid.Column="1">
+                        <TextBlock
+                    FontWeight="Bold"
+                    FontSize="20">
+                    <!-- Nombre-->
+                    <Run 
+                        FontWeight="Bold"
+                        FontSize="20"
+                        Text="{Binding ContactName,FallbackValue='Contact Name',TargetNullValue='Contact Name',UpdateSourceTrigger=PropertyChanged}"/>
+                    <LineBreak/>
+                     <!-- Online Status-->
+                    <Run 
+                        FontWeight="Bold"
+                        FontSize="15"
+                         Text="{Binding LastSeen,FallbackValue='Last Seen',TargetNullValue='Last Seen',UpdateSourceTrigger=PropertyChanged}"/>
+                        </TextBlock>
+                    </Grid>
+                </Grid>
+            </Border>
+
+        </ControlTemplate>
+
+        <Style x:Key="SwitchToggleButton" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Grid>
+                            <Border 
+                                    x:Name="SwitchBorder"
+                                    Width="60" 
+                                    Height="30" 
+                                    CornerRadius="15"
+                                    Background="Black">
+
+
+                                <Border 
+                                        x:Name="SwitchKnob"
+                                        Width="28" 
+                                        Height="28" 
+                                        CornerRadius="14"
+                                        HorizontalAlignment="Left"
+                                        Margin="1"
+                                        Background="White">
+
+
+                                    <Path 
+                                            Width="60"
+                                            Height="50"
+                                            x:Name="IconPathMode"
+                                            Fill="White" >
+                                        <Path.Style>
+                                            <Style TargetType="{x:Type Path}">
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                <Setter Property="Height" Value="50"/>
+                                                <Setter Property="Width" Value="50"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="True">
+                                                        <Setter Property="Data" Value="{StaticResource more}"/>
+
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="False">
+                                                        <Setter Property="Data" Value="{StaticResource more}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Path.Style>
+                                    </Path>
+
+                                </Border>
+
+                            </Border>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <!--UpdateSourceTrigger=PropertyChanged,RelativeSource={RelativeSource TemplatedParent}-->
+                            
+                            <Trigger Property="IsChecked" Value="False">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard SpeedRatio="5">
+                                            <DoubleAnimation 
+                                                    Storyboard.TargetName="SwitchKnob"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                                    To="30"  Duration="00:00:00.5"/>
+                                            <!--cambio de color de la bolita-->
+                                            <ColorAnimation 
+                                                    Storyboard.TargetName="SwitchKnob" 
+                                                    Storyboard.TargetProperty="(Background).Color"
+                                                    From="White" 
+                                                     To="Black" Duration="0:0:0.5"/>
+                                            <!--cambio de color del fondo-->
+                                            <ColorAnimation 
+                                                     Storyboard.TargetName="SwitchBorder" 
+                                                     Storyboard.TargetProperty="(Background).Color" 
+                                                     From="Black"
+                                                     To="White" Duration="00:00:00.5" />
+                                            <!--Cambio del Color del Path-->
+                                            <ColorAnimation 
+                                                     Storyboard.TargetName="IconPathMode" 
+                                                     Storyboard.TargetProperty="(Fill).Color"   
+                                                     From="Black"
+                                                     To="White" 
+                                                     Duration="00:00:00.5"/>
+                                            
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+
+                                <Setter TargetName="SwitchKnob" Property="HorizontalAlignment" Value="Right"/>
+
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard SpeedRatio="5">
+                                            <DoubleAnimation
+                                                    Storyboard.TargetName="SwitchKnob"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" 
+                                                    To="0" Duration="00:00:00.5"
+                                                    />
+                                            <!--cambio de color de la bolita-->
+                                            <ColorAnimation 
+                                                    Storyboard.TargetName="SwitchKnob" 
+                                                    Storyboard.TargetProperty="(Background).Color" 
+                                                    From="Black"
+                                                    To="White" 
+                                                     Duration="00:00:00.5"/>
+                                            <!--cambio de color del fondo-->
+                                            <ColorAnimation 
+                                                     Storyboard.TargetName="SwitchBorder" 
+                                                     Storyboard.TargetProperty="(Background).Color"   
+                                                     From="White"
+                                                     To="Black" 
+                                                     Duration="00:00:00.5"/>
+                                            <!--Cambio del Color del Path-->
+                                            <ColorAnimation 
+                                                     Storyboard.TargetName="IconPathMode" 
+                                                     Storyboard.TargetProperty="(Fill).Color"   
+                                                     From="White"
+                                                     To="Black" 
+                                                     Duration="00:00:00.5"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Estructura Main Window -->
+    <Border
+        CornerRadius="20"
+        Background="WhiteSmoke"
+        >
+        <Grid>
+            <!-- Definiendo Filas-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <!-- Definiendo Columnas-->
+            <Grid.ColumnDefinitions>
+
+
+                <!-- Columna para Lista de Chats de los Contactos-->
+                <ColumnDefinition Width="Auto"/>
+
+                <!-- Area de Conversacion-->
+                <ColumnDefinition />
+
+                <!--Info del Perfil-->
+                <ColumnDefinition Width="Auto"/>
+
+
+            </Grid.ColumnDefinitions>
+
+
+            <!--#region Title Bar -->
+            <Border 
+                Background="#49a078"
+                CornerRadius="20,20,0,0"
+                Grid.ColumnSpan="3"
+                MouseDown="Border_MouseDown"
+                >
+
+                <Grid>
+                    <TextBlock 
+                        Text="{Binding Title,ElementName=mainWindow}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Margin="15,0"
+                        Foreground="White"
+                        FontSize="22"
+                        FontWeight="Bold"
+                        />
+
+                    <!-- Window Buttons-->
+                    <StackPanel
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="10,0"
+                        >
+                       
+
+                        <Button
+                            x:Name="btnMinimize"
+                            Click="btnMinimize_Click"
+                            Content="{StaticResource minimize}"
+                            Style="{StaticResource IconButtonStyle}"
+                            />
+                        <Button
+                               x:Name="btnMaximize"
+                               Click="btnMaximize_Click"
+                               Content="{StaticResource maximize}"
+                                Style="{StaticResource IconButtonStyle}"
+                              />
+                        <Button
+                                 x:Name="btnClose"
+                                 Click="btnClose_Click"
+                                 Foreground="DarkRed"
+                                 Content="{StaticResource close}"
+                                 Style="{StaticResource IconButtonStyle}"
+                               />
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <!--#endregion-->
+
+
+            <!--********************* PARTE DE ABAJO **********************-->
+
+            <!--#region Contact Chat List-->
+            <!-- (General Grid.Row="1")-->
+            <Grid Grid.Row="1"   MaxWidth="350">
+
+                <Grid.RowDefinitions>
+
+                    <!-- Titulo,btnSearch & btnMoreOptions-->
+                    <RowDefinition Height="Auto"/>
+
+                    <!-- Barra de Busqueda-->
+                    <RowDefinition Height="Auto"/>
+
+                    <!-- Estados Thumbs-->
+                    <RowDefinition Height="Auto"/>
+
+                    <!-- Lista de Chats-->
+                    <RowDefinition  />
+
+                </Grid.RowDefinitions>
+
+                <!--#region Titulo & Opciones de Busqueda ect-->
+                <!-- Grid.Row = "0" (General)-->
+                <Grid 
+                    Margin="15,0" 
+                    Height="90">
+
+                    <Grid.ColumnDefinitions>
+
+                        <!--Titulo -->
+                        <ColumnDefinition Width="*"/>
+
+                        <!--Blank -->
+                        <ColumnDefinition Width="*"/>
+
+                        <!-- Search Button-->
+                        <ColumnDefinition Width="40"/>
+
+                        <!-- Mas Opciones Button-->
+                        <ColumnDefinition Width="40"/>
+
+                    </Grid.ColumnDefinitions>
+
+
+                    <TextBlock
+                        Text="Chats"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="20"
+                        FontWeight="SemiBold"/>
+
+                    <!-- Search Button-->
+                    <Button 
+                        Grid.Column="2"
+                        CommandParameter="{Binding}"
+                        HorizontalAlignment="Right"
+                        Command="{Binding OpenSearchCommand}"
+                        x:Name="btnChatSearchButton"
+                        Content="{StaticResource search}"
+                        Style="{StaticResource IconButtonStyle}"
+                        />
+                    <!-- Mas Opciones Popup Menu-->
+                    <ToggleButton 
+                        HorizontalAlignment="Right"
+                        Grid.Column="3"
+                        Name="btnMoreOptions"
+                        Content="{StaticResource more}"
+                        Style="{StaticResource ToogleIconButtonStyle}"
+                        />
+                </Grid>
+                <!--#endregion-->
+
+
+                <!--#region SeachBox-->
+                <!-- To-Do: Agregar Search Box open/close y hidden/unhidden triggers-->
+                <Border
+                        Background="#dce1de"
+                        CornerRadius="15" 
+                        Grid.Row="1"
+                        Margin="20"
+                        Height="50"
+                        Width="Auto"
+                        x:Name="searchBoxBorder"
+                        FocusManager.FocusedElement="{Binding ElementName=searchQuery}"
+                        >
+                    <!--Ocultar SearchBox cuando no tenga texto-->
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSearchBoxOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=False}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+
+                        </Style>
+                    </Border.Style>
+
+
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0" 
+                        x:Name="searchQuery"
+                        Padding="12,0"
+                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        >
+                        <TextBox.InputBindings>
+                            <!-- Key Binding to Search on "Enter" key press -->
+                            <KeyBinding Command="{Binding SearchCommand}" Key="Return"/>
+                            <!-- Key Binding to Clear Search text on "Esc" key press -->
+                            <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+                </Border>
+                <!--#endregion-->
+
+                <!--#region Status Thumbnails-->
+                <customcontrols:StatusThumbs Grid.Row="2"/>
+                <!--#endregion-->
+
+                <!--#region ChatList-->
+                <customcontrols:ChatList Grid.Row="3"/>
+                <!--#endregion-->
+            </Grid>
+            <!--#endregion-->
+
+            <!--Ocultar esta ConversationScreen cuando no este seleccionado nigun chat-->
+            <!--#region Pantalla de Conversacion-->
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Grid.Row="1">
+                <StackPanel.Style>
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Visibility , ElementName=ConversationGrid}" Value="Visible" >
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Image
+                    Stretch="Uniform"
+                    Height="400"
+                    Source="/Assets/connectedworld.png"/>
+            </StackPanel>
+            <Grid
+                x:Name="ConversationGrid"
+                Grid.Row="1"
+                Grid.Column="1">
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ContactName}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <!-- Conversacion Header-->
+                    <RowDefinition Height="Auto"/>
+
+                    <!-- Body-->
+                    <RowDefinition/>
+
+                    <!-- Reply Popup-->
+                    <RowDefinition Height="Auto"/>
+
+                    <!-- Send Message Box-->
+                    <RowDefinition Height="Auto"/>
+
+                </Grid.RowDefinitions>
+
+
+                <!--Conversation Header-->
+                <Grid
+                    Height="75"
+                    Margin="0,0,15,0"
+                    VerticalAlignment="Center">
+
+                    <Grid.ColumnDefinitions>
+                        <!-- Contact Header Name & Contact Status-->
+                        <ColumnDefinition/>
+                        <!-- btnVideoLlamada-->
+                        <ColumnDefinition Width="50"/>
+                        <!-- btnLlamada-->
+                        <ColumnDefinition Width="50"/>
+                        <!-- btnSearchMessage-->
+                        <ColumnDefinition Width="50"/>
+                        <!--Mas Opciones -->
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+
+
+                    <!--para abrir la informacion del contacto-->
+                    <!-- btnContactInfo-->
+                    <Button 
+                        Command="{Binding OpenContactInfoCommand}"
+                        Style="{StaticResource ContactInfoButtonStyle}"
+                        Template="{StaticResource ContactInfoButtonTemplate}" Click="Button_Click"/>
+                    <!--btnVideoLlamada -->
+                    <Button
+                        Style="{StaticResource IconButtonStyle}"
+                        Content="{StaticResource videocall}"
+                        Grid.Column="1"/>
+                    <!--btnLlamada -->
+                    <Button
+                        Style="{StaticResource IconButtonStyle}"
+                        Content="{StaticResource call}"
+                        Grid.Column="2"/>
+                    <!--btnSearch -->
+                    <Button
+                        Command="{Binding OpenConversationSearchCommand}"
+                        Style="{StaticResource IconButtonStyle}"
+                        Content="{StaticResource search}"
+                        Grid.Column="3"/>
+                    <!--btnMasOpciones -->
+                    <ToggleButton
+                        Style="{StaticResource ToogleIconButtonStyle}"
+                        Content="{StaticResource more}"
+                        Grid.Column="4"/>
+                </Grid>
+
+                <!-- Mensajes Body-->
+                <customcontrols:Conversation Grid.Row="1"/>
+
+                <!--#region TextBox para mandar mensajes-->
+                <Grid
+                    Grid.Row="3">
+                    <Border
+                        Background="#dce1de"
+                        CornerRadius="15"
+                        Height="50"
+                        Margin="15,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <!--TextBox Button-->
+                                <ColumnDefinition/>
+                                <!-- Attachment Button y Send Message Button-->
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox 
+                                Text="{Binding MessageText}"
+                                VerticalContentAlignment="Center"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                x:Name="MessageBox"
+                                Padding="12,0"
+                                BorderThickness="0">
+                                <!-- To-Do: Input Bindings-->
+                            </TextBox>
+                            <!-- Buttons-->
+                            <StackPanel
+                                 Grid.Column="1"
+                                 Orientation="Horizontal">
+                                <!-- To-Do: Commands-->
+                                <Button 
+                                   x:Name="AttachButton"
+                                   Content="{StaticResource attach}"
+                                   Style="{StaticResource IconButtonStyle }"/>
+                                <Button 
+                                   x:Name="SendMsgButton"   
+                                   Content="{StaticResource send}"
+                                   Style="{StaticResource IconButtonStyle }"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+                <!--#endregion-->
+            </Grid>
+            <!--#endregion-->
+
+            <!--#region Informacion de Contacto-->
+            <customcontrols:ContactInfo
+                x:Name="ContactInfoScreen"
+                Grid.Row="1"
+                Grid.Column="2"/>
+            <!--#endregion-->
+        </Grid>
+    </Border>
+</Window>
