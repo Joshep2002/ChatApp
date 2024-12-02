@@ -1,0 +1,94 @@
+﻿<UserControl x:Class="ChatApp.CustomControls.AttachFilePopupMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ChatApp.CustomControls"
+             mc:Ignorable="d"
+             Padding="20">
+    <UserControl.Resources>
+        <Style 
+            x:Key="OptionButtonStyle"
+            TargetType="{x:Type Button}">
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Command" Value="{Binding DataContext.PopupOptionsCommand,ElementName=_this}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border 
+                            Margin="5"
+                            CornerRadius="20"
+                            Background="{TemplateBinding Background}">
+                            <Grid Margin="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <!--Outer Ellipse-->
+                                    <Ellipse
+                                    Width="80"
+                                    Height="80"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding BorderStroke}"
+                                    Stretch="Uniform"
+                                    Fill="{Binding Fill}">
+                                    </Ellipse>
+                                    
+                                    <Path 
+                                        Fill="{Binding BorderStroke}"
+                                        Data="{Binding Icon}"
+                                        Style="{StaticResource {x:Type Path}}"/>
+                                </Grid>
+                                <!--Title-->
+                                <TextBlock
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding MenuText}"
+                                    TextAlignment="Center"
+                                    Foreground="{TemplateBinding Foreground}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background"  Value="#dce1de" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background"  Value="#dce1de" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Border
+        CornerRadius="20"
+        Background="White">
+        <Border.Effect>
+            <DropShadowEffect 
+                BlurRadius="25"
+                ShadowDepth="5"
+                Direction="270"
+                Color="#dce1de"/>
+        </Border.Effect>
+        <ItemsControl Margin="10" ItemsSource="{Binding AttachPopupMenuList}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="2" Columns="3"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                        Tag="{Binding Icon}"
+                        Content="{Binding MenuText}"
+                        Style="{DynamicResource OptionButtonStyle}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Border>
+</UserControl>

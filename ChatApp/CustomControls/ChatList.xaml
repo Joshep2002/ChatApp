@@ -119,10 +119,10 @@
                                                     </TextBlock>
 
                                                     <TextBlock
+                                                        Text="{Binding Message,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                                     Grid.Row="1">
                                                         <TextBlock.Style>
                                                             <Style TargetType="{x:Type TextBlock}">
-                                                                <Setter Property="Text" Value="{Binding Message}"/>
                                                                 <Setter Property="FontWeight" Value="Normal"/>
                                                                 <Style.Triggers>
                                                                     <DataTrigger

@@ -126,7 +126,7 @@
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <!--To-Do: Add Animation-->
-                            <WrapPanel>
+                            <WrapPanel HorizontalAlignment="Center">
                                 <b:Interaction.Behaviors>
                                     <b:FluidMoveBehavior AppliesTo="Children" Duration="00:00:00.25"/>
                                 </b:Interaction.Behaviors>
@@ -134,7 +134,7 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
 
-
+                   
                     <Button 
                         Content="/Assets/2.jpg"
                         Style="{StaticResource MediaButtonStyle}"/>

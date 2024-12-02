@@ -4,18 +4,59 @@
              xmlns:local="clr-namespace:ChatApp"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        
+       
+        
         <!--Loading our Icons-->
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Assets/icons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
+
+            <!--#region Animation Story Board-->
+            <!--Mpuse Enter Animation-->
+            <Storyboard x:Key="MouseEnterAnimation" SpeedRatio="5">
+                <DoubleAnimation Storyboard.TargetProperty="Height" To="22"/>
+                <DoubleAnimation Storyboard.TargetProperty="Width" To="22"/>
+            </Storyboard>
+            <!--Mouse Level Animation-->
+            <Storyboard x:Key="MouseLevelAnimation" SpeedRatio="5">
+                <DoubleAnimation Storyboard.TargetProperty="Height" To="20"/>
+                <DoubleAnimation Storyboard.TargetProperty="Width" To="20"/>
+            </Storyboard>
+            <!--#endregion-->
+
             <!-- Default Style for Path's-->
             <Style TargetType="{x:Type Path}">
                 <Setter Property="Height" Value="20"/>
                 <Setter Property="Width" Value="20"/>
                 <Setter Property="Stretch" Value="Uniform"/>
-                <!--Animations Latter-->
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Fill" Value="Black"/>
+                <!--Path Animations-->
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Value="True">
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard Storyboard="{StaticResource MouseEnterAnimation}"/>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <BeginStoryboard Storyboard="{StaticResource MouseLevelAnimation}"/>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                
+                <!--Animations For Icons in Toggle Button-->
+                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="True">
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard Storyboard="{StaticResource MouseEnterAnimation}"/>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <BeginStoryboard Storyboard="{StaticResource MouseLevelAnimation}"/>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                    
+                </Style.Triggers>
             </Style>
 
             <!--Style for buttons with Icon-->

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ChatApp.CustomControls" 
+             
+             xmlns:local="clr-namespace:ChatApp.AttachedProperties"
              xmlns:animations="clr-namespace:ChatApp.Animations" 
              xmlns:viewmodel="clr-namespace:ChatApp.ViewModels" xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d"
@@ -254,6 +255,7 @@
         <!-- To-Do: Agregar propiedad adjunta al 
         desplazamiento automático a la parte inferior-->
         <ScrollViewer   
+            local:ScrollViewerAttachedProperties.AutoScroll="True"
              Style="{StaticResource ScrollViewerStyle}"
              PreviewMouseWheel="ScrollViewerPreview"
              Background="WhiteSmoke"

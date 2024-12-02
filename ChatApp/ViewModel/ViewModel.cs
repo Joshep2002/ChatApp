@@ -1,4 +1,5 @@
 ﻿using ChatApp.Commands;
+using ChatApp.CustomControls;
 using ChatApp.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6,17 +7,22 @@ using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ChatApp.ViewModels
 {
     public class ViewModel : INotifyPropertyChanged
-
     {
+
+
+        // Initializing resources dictionary files
+        private readonly ResourceDictionary dictionary = Application.LoadComponent(new Uri("/ChatApp;component/Assets/icons.xaml", UriKind.RelativeOrAbsolute)) as ResourceDictionary;
+
         #region MainWindow
 
         #region Properties
         public string ContactName { get; set; }
-        public Uri ContactPhoto { get; set; }
+        public byte[] ContactPhoto { get; set; }
         public string LastSeen { get; set; }
 
         #region Search Chats
@@ -59,21 +65,166 @@ namespace ChatApp.ViewModels
                     Search();
                 }
 
-
-
+            }
+        }
+        public ObservableCollection<MoreOptionsMenu> _windowMoreOptionsMenuList;
+        public ObservableCollection<MoreOptionsMenu> WindowMoreOptionsMenuList
+        {
+            get { return _windowMoreOptionsMenuList; }
+            set
+            {
+                _windowMoreOptionsMenuList = value;
             }
         }
 
-       
-    
+        public ObservableCollection<MoreOptionsMenu> _attachPopupMenuList;
+        public ObservableCollection<MoreOptionsMenu> AttachPopupMenuList
+        {
+            get { return _attachPopupMenuList; }
+            set
+            {
+                _attachPopupMenuList = value;
+            }
+        }
 
-    #endregion
 
-    #endregion
 
-    #region Logics
 
-    public void OpenSearchBox() => IsSearchBoxOpen = true;
+        #endregion
+
+        #endregion
+
+        #region Logics
+
+        #region More Options Menu Popup
+        void WindowMoreOptionsMenu()
+        {
+
+            WindowMoreOptionsMenuList = new ObservableCollection<MoreOptionsMenu>
+            {
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["newgroup"],
+                    MenuText = "Nuevo Groupo"
+                },
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["newbroadcast"],
+                    MenuText = "Nueva Alerta"
+                },
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["starredmessages"],
+                    MenuText = "Mensajes Favoritos"
+                },
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["settings"],
+                    MenuText = "Configuracion"
+                },
+            };
+            OnPropertyChanged("WindowMoreOptionsMenuList");
+        }
+
+        void ConversationScreenMoreOptionsMenu()
+        {
+
+            WindowMoreOptionsMenuList = new ObservableCollection<MoreOptionsMenu>
+            {
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["allmedia"],
+                    MenuText = "Videos"
+                },
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["wallpaper"],
+                    MenuText = "Wallpaper"
+                },
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["report"],
+                    MenuText = "Reportar"
+                },
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["block"],
+                    MenuText = "Bloquear"
+                },
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["clearchat"],
+                    MenuText = "Limpiar Chat"
+                },
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["exportchat"],
+                    MenuText = "Exportar Chats"
+                },
+            };
+            OnPropertyChanged("WindowMoreOptionsMenuList");
+        }
+        #endregion
+        #region Attach Popup Menu
+        void AttachPopupMenuOption()
+        {
+
+            AttachPopupMenuList = new ObservableCollection<MoreOptionsMenu>
+            {
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["docs"],
+                    MenuText = "Documentos",
+                    BorderStroke = "#3F3990",
+                    Fill="#CDCEEC"
+
+                },
+                 new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["camera"],
+                    MenuText = "Camara",
+                    BorderStroke = "#2C5A71",
+                    Fill="#C5E7F8"
+
+                },
+                new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["gallery"],
+                    MenuText = "Galeria",
+                    BorderStroke = "#EA2140",
+                    Fill="#F3BEBE"
+
+                },
+                 new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["audio"],
+                    MenuText = "Audio",
+                    BorderStroke = "#E67E00",
+                    Fill="#D7D5AC"
+
+                },
+                  new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["location"],
+                    MenuText = "Ubicacion",
+                    BorderStroke = "#28C58F",
+                    Fill="#E3F5EF"
+
+                },
+                   new MoreOptionsMenu
+                {
+                    Icon = (PathGeometry)dictionary["contact"],
+                    MenuText = "Contactos",
+                    BorderStroke = "#0093E0",
+                    Fill="#DDF1FB"
+
+                }
+            };
+            OnPropertyChanged("AttachPopupMenuList");
+        }
+        #endregion
+
+        public void OpenSearchBox() => IsSearchBoxOpen = true;
 
         public void CloseSearchBox() => IsSearchBoxOpen = false;
 
@@ -84,7 +235,7 @@ namespace ChatApp.ViewModels
             else
                 CloseSearchBox();
         }
-        
+
         protected void Search()
         {
             // To avoid re searching same text again
@@ -131,7 +282,60 @@ namespace ChatApp.ViewModels
         #endregion
 
         #region Command
-       
+        /// <summary>
+        ///  Attach Menu
+        /// </summary>
+        protected ICommand _attachMenuCommand;
+        public ICommand AttachMenuCommand
+        {
+            get
+            {
+                if (_attachMenuCommand == null)
+                    _attachMenuCommand = new CommandViewModel(AttachPopupMenuOption);
+
+                return _attachMenuCommand;
+            }
+            set
+            {
+                _attachMenuCommand = value;
+            }
+        }
+
+
+        /// <summary>
+        /// Window More Options Menu
+        /// </summary>
+        protected ICommand _windowMoreOptionsCommand;
+        public ICommand WindowMoreOptionsCommand
+        {
+            get
+            {
+                if (_windowMoreOptionsCommand == null)
+                    _windowMoreOptionsCommand = new CommandViewModel(WindowMoreOptionsMenu);
+
+                return _windowMoreOptionsCommand;
+            }
+            set
+            {
+                _windowMoreOptionsCommand = value;
+            }
+        }
+
+        protected ICommand _conversationMoreOptionsCommand;
+        public ICommand ConversationMoreOptionsCommand
+        {
+            get
+            {
+                if (_conversationMoreOptionsCommand == null)
+                    _conversationMoreOptionsCommand = new CommandViewModel(ConversationScreenMoreOptionsMenu);
+
+                return _conversationMoreOptionsCommand;
+            }
+            set
+            {
+                _conversationMoreOptionsCommand = value;
+            }
+        }
 
         /// <summary>
         /// Open Search Command
@@ -328,49 +532,119 @@ namespace ChatApp.ViewModels
         #region Logics
         void LoadChats()
         {
-            Chats = new ObservableCollection<ChatListData>()
+            //Loading data from Database
+            if (Chats == null)
+                Chats = new ObservableCollection<ChatListData>();
+
+            //Opening
+            connection.Open();
+
+            //Temporary Colllection
+            ObservableCollection<ChatListData> temp = new ObservableCollection<ChatListData>();
+
+            using (SqlCommand command = new SqlCommand("select * from contacts p left join (select a.*, row_number() over(partition by a.contactname order by a.id desc) as seqnum from conversations a ) a on a.ContactName = p.contactname and a.seqnum = 1 order by a.Id desc", connection))
             {
-                new ChatListData
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    ContactName="Jose",
-                    ContactPhoto=new Uri("/Assets/2.jpg",UriKind.RelativeOrAbsolute),
-                    Message="Hey, Whats UpPPP121212",
-                    LastMessageTime="Tue, 12:58 PM",
-                    ChatIsSelected=true,
-                },
-                 new ChatListData
-                {
-                    ContactName="Steve",
-                    ContactPhoto=new Uri("/Assets/3.jpg",UriKind.RelativeOrAbsolute),
-                    Message="Hey, Whats Up",
-                    LastMessageTime="Tue, 12:58 PM",
-                    ChatIsSelected=true,
-                },
-                  new ChatListData
-                {
-                    ContactName="Mike",
-                    ContactPhoto=new Uri("/Assets/5.jpg",UriKind.RelativeOrAbsolute),
-                    Message="Hey, Whats Up",
-                    LastMessageTime="Tue, 12:58 PM",
-                    ChatIsSelected=true,
-                },
-                   new ChatListData
-                {
-                    ContactName="Juan",
-                    ContactPhoto=new Uri("/Assets/7.png",UriKind.RelativeOrAbsolute),
-                    Message="Hey, Whats Up",
-                    LastMessageTime="Tue, 12:58 PM",
-                    ChatIsSelected=true,
-                },
-                    new ChatListData
-                {
-                    ContactName="Federico",
-                    ContactPhoto=new Uri("/Assets/8.jpg",UriKind.RelativeOrAbsolute),
-                    Message="Hey, Whats Up",
-                    LastMessageTime="Tue, 12:58 PM",
-                    ChatIsSelected=true,
-                },
-            };
+                    // To avoid duplications
+                    string lastItem = string.Empty;
+                    string newItem = string.Empty;
+
+                    while (reader.Read())
+                    {
+                        string time = string.Empty;
+                        string lastmessage = string.Empty;
+
+                        // if the last message is received from sender than update time & lasmessage variables
+                        if (!string.IsNullOrEmpty(reader["MsgReceivedOn"].ToString()))
+                        {
+                            time = Convert.ToDateTime(reader["MsgReceivedOn"].ToString()).ToString("ddd hh:mm tt");
+                            lastmessage = reader["ReceivedMsgs"].ToString();
+                        }
+
+                        //else if we have sent las message update accordingly
+                        if (!string.IsNullOrEmpty(reader["MsgSentOn"].ToString()))
+                        {
+                            time = Convert.ToDateTime(reader["MsgSentOn"].ToString()).ToString("ddd hh:mm tt");
+                            lastmessage = reader["SentMsgs"].ToString();
+                        }
+                        // if the chat is new or we are starting new conversation wich means there will be no previus sent or received msgs in the case
+                        // show 'start new conversation' message
+                        if (string.IsNullOrEmpty(lastmessage))
+                            lastmessage = "Start new Conversation";
+
+
+                        //Update data in model
+                        ChatListData chat = new ChatListData()
+                        {
+                            ContactPhoto = (byte[])reader["photo"],
+                            ContactName = reader["contactname"].ToString(),
+                            Message = lastmessage,
+                            LastMessageTime = time
+
+                        };
+
+                        // Update
+                        newItem = reader["contactname"].ToString();
+
+                        //if last added chat contact is not same as new one then only add..
+                        if (lastItem != newItem)
+                            temp.Add(chat);
+
+                        lastItem = newItem;
+                    }
+                }
+            }
+
+            //Transfer Data
+            Chats = temp;
+
+            //Update
+            OnPropertyChanged("Chats");
+
+            //Chats = new ObservableCollection<ChatListData>()
+            //{
+            //    new ChatListData
+            //    {
+            //        ContactName="Jose",
+            //        ContactPhoto=new Uri("/Assets/2.jpg",UriKind.RelativeOrAbsolute),
+            //        Message="Hey, Whats UpPPP121212",
+            //        LastMessageTime="Tue, 12:58 PM",
+            //        ChatIsSelected=true,
+            //    },
+            //     new ChatListData
+            //    {
+            //        ContactName="Steve",
+            //        ContactPhoto=new Uri("/Assets/3.jpg",UriKind.RelativeOrAbsolute),
+            //        Message="Hey, Whats Up",
+            //        LastMessageTime="Tue, 12:58 PM",
+            //        ChatIsSelected=true,
+            //    },
+            //      new ChatListData
+            //    {
+            //        ContactName="Mike",
+            //        ContactPhoto=new Uri("/Assets/5.jpg",UriKind.RelativeOrAbsolute),
+            //        Message="Hey, Whats Up",
+            //        LastMessageTime="Tue, 12:58 PM",
+            //        ChatIsSelected=true,
+            //    },
+            //       new ChatListData
+            //    {
+            //        ContactName="Juan",
+            //        ContactPhoto=new Uri("/Assets/7.png",UriKind.RelativeOrAbsolute),
+            //        Message="Hey, Whats Up",
+            //        LastMessageTime="Tue, 12:58 PM",
+            //        ChatIsSelected=true,
+            //    },
+            //        new ChatListData
+            //    {
+            //        ContactName="Federico",
+            //        ContactPhoto=new Uri("/Assets/8.jpg",UriKind.RelativeOrAbsolute),
+            //        Message="Hey, Whats Up",
+            //        LastMessageTime="Tue, 12:58 PM",
+            //        ChatIsSelected=true,
+            //    },
+            //};
             OnPropertyChanged();
         }
         #endregion
@@ -593,6 +867,9 @@ namespace ChatApp.ViewModels
                 }
             }
         }
+        public string MessageToReplyText { get; set; }
+        public bool FocusMessageBox { get; set; }
+        public bool IsThisAReplyMessage { get; set; }
         #endregion 
 
         #region Logics
@@ -608,7 +885,7 @@ namespace ChatApp.ViewModels
                 CloseConversationSearchBox();
         }
 
-        
+
         void LoadConversation(ChatListData chat)
 
         {
@@ -653,11 +930,16 @@ namespace ChatApp.ViewModels
                         OnPropertyChanged("Conversations");
                         FilteredConversations.Add(conversation);
                         OnPropertyChanged("FilteredConversations");
+
+
+                        chat.Message = !string.IsNullOrEmpty(reader["ReceivedMsgs"].ToString()) ? reader["ReceivedMsgs"].ToString() :
+                            reader["SentMsgs"].ToString();
                     }
                 }
             }
-
-
+            // Reset Reply Message Text when the new chat is fetched
+            MessageToReplyText = string.Empty;
+            OnPropertyChanged("MessageToReplyText");
         }
 
         void SearchInConversation()
@@ -684,6 +966,72 @@ namespace ChatApp.ViewModels
             LastSearchConversationText = SearchConversationText;
             //else if not found un normal unpinned chat list find in pinned chat list
 
+        }
+        public void CancelReply()
+        {
+            IsThisAReplyMessage = false;
+            //Reset Reply Message Text
+            MessageToReplyText = string.Empty;
+            OnPropertyChanged("MessageToReplyText");
+        }
+        public void SendMessage()
+        {
+            if (!string.IsNullOrEmpty(MessageText))
+            {
+                var conversation = new ChatConversation()
+                {
+                    ReceivedMessage = MessageToReplyText,
+                    SentMessage = MessageText,
+                    MsgSentOn = DateTime.Now.ToString("MMM dd, hh:mm tt"),
+                    MessageContainsReply = IsThisAReplyMessage,
+
+                };
+                FilteredConversations.Add(conversation);
+                Conversations.Add(conversation);
+
+
+
+                MessageText = string.Empty;
+                IsThisAReplyMessage = false;
+                MessageToReplyText = string.Empty;
+
+                UpdateAndMoveUp(Chats, conversation);
+                UpdateAndMoveUp(PinnedChats, conversation);
+                UpdateAndMoveUp(FilteredPinnedChats, conversation);
+                UpdateAndMoveUp(ArchivedChats, conversation);
+                UpdateAndMoveUp(FilteredChats, conversation);
+
+                OnPropertyChanged("FilteredConversations");
+                OnPropertyChanged("Conversations");
+                OnPropertyChanged("MessageText");
+                OnPropertyChanged("IsThisAReplyMessage");
+                OnPropertyChanged("MessageToReplyText");
+            }
+        }
+        //CompilerMarshalOverride THE CHAT CONTACT ON TOP WHEN NEW MESSAGE IS SENT OR RECEIVED
+        protected void UpdateAndMoveUp(ObservableCollection<ChatListData> chatList, ChatConversation conversation)
+        {
+            // Check if the message sent is to the selected contact or not
+            var chat = chatList.FirstOrDefault(x => x.ContactName == ContactName);
+            // if found.. then
+            if (chat != null)
+            {
+                // update contact chat las message ant message time
+                chat.Message = MessageText;
+                chat.LastMessageTime = conversation.MsgSentOn;
+
+                //move chat on top when new message is received/sent
+                if (chatList.Contains(chat)) { 
+                }
+                chatList.Move(chatList.IndexOf(chat), 0);
+
+                OnPropertyChanged("Chats");
+                OnPropertyChanged("PinnedChats");
+                OnPropertyChanged("FilteredPinnedChats");
+                OnPropertyChanged("ArchivedChats");
+                OnPropertyChanged("FilteredChats");
+
+            }
         }
 
         SqlConnection connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Administrador\source\repos\ChatApp\ChatApp\Database\Database1.mdf;Integrated Security=True");
@@ -750,6 +1098,52 @@ namespace ChatApp.ViewModels
                 _searchConversationCommand = value;
             }
         }
+        protected ICommand _replyCommand;
+        public ICommand ReplyCommand => _replyCommand ??= new RelayCommand(parameter =>
+        {
+            if (parameter is ChatConversation v)
+            {
+                if (v.IsMessageReceived)
+                    MessageToReplyText = v.ReceivedMessage;
+                else
+                    MessageToReplyText = v.SentMessage;
+
+                OnPropertyChanged("ReplyCommand");
+                OnPropertyChanged("MessageToReplyText");
+                FocusMessageBox = true;
+                OnPropertyChanged("FocusMessageBox");
+                IsThisAReplyMessage = true;
+                OnPropertyChanged("IsThisAReplyMessage");
+            }
+        });
+        protected ICommand _cancelReplyCommand;
+        public ICommand CancelReplyCommand
+        {
+            get
+            {
+                if (_cancelReplyCommand == null)
+                    _cancelReplyCommand = new CommandViewModel(CancelReply);
+                return _cancelReplyCommand;
+            }
+            set
+            {
+                _cancelReplyCommand = value;
+            }
+        }
+        protected ICommand _sendMessageCommand;
+        public ICommand SendMessageCommand
+        {
+            get
+            {
+                if (_sendMessageCommand == null)
+                    _sendMessageCommand = new CommandViewModel(SendMessage);
+                return _sendMessageCommand;
+            }
+            set
+            {
+                _sendMessageCommand = value;
+            }
+        }
         #endregion
         #endregion
 
@@ -759,9 +1153,9 @@ namespace ChatApp.ViewModels
         protected bool _isContactInfoOpen;
         public bool IsContactInfoOpen
         {
-            get=> _isContactInfoOpen;
+            get => _isContactInfoOpen;
             set
-            { 
+            {
                 _isContactInfoOpen = value;
                 OnPropertyChanged("IsContactInfoOpen");
                 OnPropertyChanged();
@@ -769,12 +1163,14 @@ namespace ChatApp.ViewModels
         }
 
         #endregion
+
         #region Logics
-        public void OpenContactInfo()=> IsContactInfoOpen = true;
+        public void OpenContactInfo() => IsContactInfoOpen = true;
         public void CloseContactInfo() => IsContactInfoOpen = false;
 
 
         #endregion
+
         #region Commands
         protected ICommand _openContactInfoCommand;
         public ICommand OpenContactInfoCommand
@@ -811,7 +1207,7 @@ namespace ChatApp.ViewModels
 
         public ViewModel()
         {
-            
+
             LoadStatusThumbs();
             LoadChats();
             PinnedChats = new ObservableCollection<ChatListData>();
